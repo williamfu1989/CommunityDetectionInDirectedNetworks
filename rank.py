@@ -25,7 +25,9 @@ def simrank(G, r=0.8, max_iter=10, eps=EPS):
   sim = numpy.identity(len(nodes))
 
   logging.info('Started iteration')
-  for i in range(max_iter):
+  for i in range(40):
+    print sim
+    print sim_prev
     if numpy.allclose(sim, sim_prev, atol=eps): logging.info('No change in SimRanks. Stopping...'); break
     sim_prev = numpy.copy(sim)
     for u, v in itertools.product(nodes, nodes):
@@ -34,6 +36,7 @@ def simrank(G, r=0.8, max_iter=10, eps=EPS):
       s_uv = sum(sim_prev[nodes_i[u_n]][nodes_i[v_n]] for u_n, v_n in itertools.product(u_ps, v_ps))
       sim[nodes_i[u]][nodes_i[v]] = (r * s_uv) / (len(u_ps) * len(v_ps) + DIV_EPS)
     logging.info('iter %d'%(i + 1))
+    print 'iter', i+1
 
   return sim, nodes_i
 
@@ -89,7 +92,7 @@ def prll_simrank(G, r=0.8, max_iter=10, eps=EPS):
 
 
 if __name__ == '__main__':
+  #  input = nx.read_graphml('simrank_test_graph_widom.graphml')
   input = nx.read_graphml('simrank_test_graph_widom.graphml')
-  #  input = nx.read_graphml('simrank.graphml')
-  sim, mapping = simrank(input, max_iter=20, r=0.8)
+  sim, mapping = simrank(input, max_iter=40, r=0.8)
   print sim

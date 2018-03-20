@@ -14,12 +14,13 @@ def buildG(G, file_, delimiter_):
     reader = csv.reader(open(file_), delimiter=delimiter_)
     for line in reader:
         if len(line) > 2:
+            print "*******",line[0], line[1], line[2]
             if float(line[2]) != 0.0:
                 #line format: u,v,w
-                G.add_edge(int(line[0]),int(line[1]),weight=float(line[2]))
+                G.add_edge(str(line[0]),str(line[1]),weight=float(line[2]))
         else:
             #line format: u,v
-            G.add_edge(int(line[0]),int(line[1]),weight=1.0)
+            G.add_edge(str(line[0]),str(line[1]),weight=1.0)
 
 #keep removing edges from Graph until one of the connected components of Graph splits into two
 #compute the edge betweenness
@@ -64,8 +65,8 @@ def UpdateDeg(A, nodes):
     n = len(nodes)  #len(A) ---> some ppl get issues when trying len() on sparse matrixes!
     B = A.sum(axis = 1)
     for i in range(n):
-        #  deg_dict[nodes[i]] = B[i, 0]
-        deg_dict[i] = B[i, 0]
+        deg_dict[nodes[i]] = B[i, 0]
+        #  deg_dict[i] = B[i, 0]
     return deg_dict
 
 #run GirvanNewman algorithm and find the best community split by maximizing modularity measure
@@ -83,8 +84,15 @@ def runGirvanNewman(G, Orig_deg, m_):
         if G.number_of_edges() == 0:
             break
     if BestQ > 0.0:
-        print "Max modularity (Q): %f" % BestQ
         print "Graph communities:", Bestcomps
+        f = open('result.txt', 'w')
+        for group in Bestcomps:
+          str = ""
+          for value in group:
+            str = str+ value+","
+          print >> f, str
+        print len(Bestcomps)
+        print "Max modularity (Q): %f" % BestQ
     else:
         print "Max modularity (Q): %f" % BestQ
 
